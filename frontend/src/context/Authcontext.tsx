@@ -153,9 +153,12 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
       return;
     }
     try {
-      const res = await axiosInstance.post<ApiResponse<string>>("/api/auth/sign-up", {...formData, role: "User"});
+      const res = await axiosInstance.post<ApiResponse<User>>("/api/auth/sign-up", {...formData, role: "User"});
       if(res.data.success){
         toast.success(res.data.message);
+        setUser(res.data.user);
+        Cookies.set("user", JSON.stringify(res.data.user));
+        isLoggedOutRef.current = false;
       } else {
         toast.error(res.data.message);
       }

@@ -4,7 +4,7 @@ import { handleError } from "../../lib/errorHandler";
 import toast from "react-hot-toast";
 import Input from "../../components/common/input";
 import Button from "../../components/common/button";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 interface FormTypes {
   email: string;
@@ -16,6 +16,7 @@ const SignIn = () => {
   const { signIn, loading, user, errors, clearErrors } = useAuth();
 
   if (user) return <Navigate to="/" />;
+  const navigate = useNavigate();
   const [ispasswordVisible, setIspasswordVisible] = useState<boolean>(false);
   const [form, setForm] = useState<FormTypes>({
     email: "",
@@ -73,7 +74,7 @@ const SignIn = () => {
             {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
           </div>
         </div>
-        <div className="flex items-center justify-end mt-6">
+        <div className="flex flex-col items-center justify-end mt-6 gap-4">
           <Button
             type="submit"
             className="cursor-pointer px-4"
@@ -81,6 +82,7 @@ const SignIn = () => {
           >
             {loading ? "Signing..." : "Sign in"}
           </Button>
+          <p onClick={() => navigate("/sign-up")} className="text-xs cursor-pointer hover:text-blue-700 text-blue-500">Don't have an account.</p>
         </div>
       </form>
     </div>

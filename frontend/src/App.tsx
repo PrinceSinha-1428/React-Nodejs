@@ -3,12 +3,14 @@ import AdminPage from "./pages/admin/admin-page";
 import SignIn from "./pages/auth/sign-in";
 import ProtectedRoutes, { AdminRoute } from "./pages";
 import Home from "./pages/Home";
+import SignUp from "./pages/auth/sign-up";
 
 const App = () => {
   return (
     <div className="dark:bg-black bg-white min-h-screen text-zinc-900 dark:text-white">
       <Routes>
         <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
         <Route element={<ProtectedRoutes />}>
           <Route path="/" element={<Home/>} />
         </Route>

@@ -90,9 +90,12 @@ export const signUp = async (req: Request, res: Response) => {
       maxAge: 24 * 60 * 60 * 1000,
       path: "/",
     });
+    const { password: _, ...safeUser } = newUser.toJSON();
+
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
+      user: safeUser,
       accessToken,
     });
   } catch (error: unknown) {

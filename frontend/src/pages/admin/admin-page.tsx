@@ -64,10 +64,10 @@ const AdminPage = () => {
           <tbody>
             {users?.map(({ user_id, name, email, role }, idx) => (
               <tr key={user_id}>
-                <td className="px-4 py-2 border-b border-white/10">
+                <td className="px-4 py-2 border-b dark:border-white/10">
                   {idx + 1}
                 </td>
-                <td className="px-4 py-2 border-b border-white/10">
+                <td className="px-4 py-2 border-b dark:border-white/10">
                   {editingId === user_id ? (
                     <Input
                       label=""
@@ -83,7 +83,7 @@ const AdminPage = () => {
                     name
                   )}
                 </td>
-                <td className="px-4 py-2 border-b border-white/10">
+                <td className="px-4 py-2 border-b dark:border-white/10">
                   {editingId === user_id ? (
                     <Input
                       label=""
@@ -99,7 +99,7 @@ const AdminPage = () => {
                     email
                   )}
                 </td>
-                <td className="px-4 py-2 border-b border-white/10">
+                <td className="px-4 py-2 border-b dark:border-white/10">
                   {editingId === user_id ? (
                     <Select
                       label=""
@@ -115,7 +115,7 @@ const AdminPage = () => {
                   )}
                 </td>
                 {user?.role === "Super Admin" && (
-                  <td className="px-4 py-2 border-b border-white/10 cursor-pointer">
+                  <td className="px-4 py-2 border-b dark:border-white/10 cursor-pointer">
                     {editingId === user_id ? (
                       <span className="flex items-center justify-center gap-10 w-fit">
                         <Check
