@@ -1,5 +1,6 @@
 import path from "path";
 import express, { Express } from "express";
+import cookieParser from "cookie-parser";
 import apiRoutes from "./routes/apiRoutes.route";
 import { ENV, NODE_ENV } from "./config/env.environment";
 import { createServer as viteServer } from "vite";
@@ -9,6 +10,7 @@ import db from "./models";
 const app: Express = express();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 const frontendPath = path.join(__dirname, "../../frontend");

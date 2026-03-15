@@ -1,9 +1,74 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { resErrorHanlder } from "@/config/error.handler";
-import { NODE_ENV } from "@/config/env.environment";
+import { ENV, NODE_ENV } from "@/config/env.environment";
 import { generateToken } from "@/config/helper";
 import db from "@/models";
+import jwt from "jsonwebtoken";
+
+export const signUp = async (req: Request, res: Response) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing credentials",
+      });
+    }
+
+    const isAlreadyRegistered = await db.models.User.findOne({
+      where: { email },
+    });
+    if (isAlreadyRegistered) {
+      return res.status(409).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await db.models.User.create({
+      name,
+      email,
+      role,
+      password: hashedPassword,
+    });
+
+    const accessToken = generateToken({ user_id: newUser.user_id, email, role },  15, "m" );
+    const refreshToken = generateToken({ user_id: newUser.user_id, email, role }, 1, "d" );
+    const sessionExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+      path: "/",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+    res.cookie("accessToken", accessToken, {
+      httpOnly: false,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 10,
+      path: "/",
+    });
+    res.cookie("sessionExpiresAt", String(sessionExpiresAt), {
+      httpOnly: false,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+    return res.status(201).json({
+      success: false,
+      message: "User registered successfully",
+      accessToken,
+    });
+  } catch (error: unknown) {
+    return resErrorHanlder(error, res);
+  }
+};
 
 export const signIn = async (req: Request, res: Response) => {
   try {
@@ -28,6 +93,7 @@ export const signIn = async (req: Request, res: Response) => {
         user: null,
       });
     }
+
     const isMatched = await bcrypt.compare(password, user.password);
     if (!isMatched) {
       return res.status(400).json({
@@ -37,20 +103,42 @@ export const signIn = async (req: Request, res: Response) => {
       });
     }
     const user_id = user.user_id;
-    const role =  user.role;
-    const token = generateToken({ user_id, email, role }, 1, "d");
+    const role = user.role;
+
+    const accessToken = generateToken({ user_id, email, role }, 15, "m");
+    const refreshToken = generateToken({ user_id, email, role }, 1, "d");
+
     const { password: _, ...safeUser } = user;
-    res.cookie("token", token, {
+
+    const sessionExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+    res.cookie("accessToken", accessToken, {
       httpOnly: false,
       sameSite: "lax",
       secure: NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 10,
       path: "/",
     });
+    res.cookie("sessionExpiresAt", String(sessionExpiresAt), {
+      httpOnly: false,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+
     return res.status(200).json({
       success: true,
       message: "Signed in successfully",
       user: safeUser,
+      accessToken,
     });
   } catch (error: unknown) {
     return resErrorHanlder(error, res);
@@ -59,14 +147,79 @@ export const signIn = async (req: Request, res: Response) => {
 
 export const logout = async (_req: Request, res: Response) => {
   try {
-    res.clearCookie("token", { path: "/" });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+      path: "/",
+    });
+    res.clearCookie("accessToken", {
+      httpOnly: false,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+      path: "/",
+    });
+    res.clearCookie("sessionExpiresAt", {
+      httpOnly: false,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+      path: "/",
+    });
     return res.status(200).json({
       success: true,
       message: "Logged out successfully",
       data: {
         isLoggedOut: true,
-        route: "/",
+        route: "/sign-in",
       },
+    });
+  } catch (error: unknown) {
+    return resErrorHanlder(error, res);
+  }
+};
+
+export const refreshToken = async (req: Request, res: Response) => {
+  try {
+    const { refreshToken } = req.cookies;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "refreshToken not found",
+      });
+    }
+    const decoded = jwt.verify(refreshToken, ENV[NODE_ENV].jwt_secret) as {
+      user_id: string;
+      email: string;
+      role: string;
+    };
+    const payload = {
+      user_id: decoded.user_id,
+      email: decoded.email,
+      role: decoded.role,
+    };
+
+    const accessToken = generateToken(payload, 10, "s");
+    const newRefreshToken = generateToken(payload, 1, "d");
+
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+    res.cookie("accessToken", accessToken, {
+      httpOnly: false,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 10,
+      path: "/",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Access Token refreshed successfully",
     });
   } catch (error: unknown) {
     return resErrorHanlder(error, res);

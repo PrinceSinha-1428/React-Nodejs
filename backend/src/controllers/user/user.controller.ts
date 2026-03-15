@@ -50,3 +50,33 @@ export const getUsers = async (_req: Request, res: Response) => {
     return resErrorHanlder(error, res);
   }
 };
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const { id: user_id } = req.params;
+
+    if(!user_id){
+      return res.status(400).json({
+        success: false,
+        message: "User id is missing"
+      });
+    };
+
+   const deleted = await db.models.User.destroy({
+    where: { user_id }
+   });
+
+   if(!deleted){
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      })
+   }
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully"
+    })
+  } catch (error: unknown) {
+    return resErrorHanlder(error, res)
+  }
+}
