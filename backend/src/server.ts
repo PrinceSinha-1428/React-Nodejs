@@ -2,7 +2,7 @@ import path from "path";
 import express, { Express } from "express";
 import cookieParser from "cookie-parser";
 import apiRoutes from "./routes/apiRoutes.route";
-import { ENV, NODE_ENV } from "./config/env.environment";
+import { ENV, NODE_ENV } from "./config/env.service";
 import { createServer as viteServer } from "vite";
 import { checkDBService } from "./middleware/db/db.middleware";
 import db from "./models";

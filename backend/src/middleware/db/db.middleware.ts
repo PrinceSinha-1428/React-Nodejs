@@ -1,4 +1,4 @@
-import { connectDB } from "@/config/db";
+import { connectDB } from "@/config/db.service";
 import { resErrorHanlder } from "@/config/error.handler";
 import { NextFunction, Request, Response } from "express";
 

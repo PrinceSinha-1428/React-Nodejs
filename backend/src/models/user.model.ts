@@ -17,6 +17,15 @@ export class User extends Model<
   declare email: string;
   declare password: string;
   declare role: Role;
+
+  static associate(models: any) {
+    User.hasMany(models.Session, {
+      foreignKey: "user_id",
+      as: "sessions",
+      onDelete: "CASCADE",   
+      hooks: true,  
+    });
+  }
 }
 
 export const initUserModel = (sequelize: Sequelize) => {

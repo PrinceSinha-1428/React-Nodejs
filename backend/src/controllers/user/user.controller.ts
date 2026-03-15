@@ -127,3 +127,42 @@ export const updateUser = async (req: Request, res: Response) => {
     return resErrorHanlder(error, res);
   }
 }
+
+export const getUserById = async (req: Request, res: Response) => {
+  try {
+    const { id: user_id } = req.params;
+
+    if(!user_id){
+      return res.status(400).json({
+        success: false,
+        message: "user_id is missing"
+      });
+    };
+
+    const user = await db.models.User.findByPk(user_id as string, {
+      attributes: {
+        exclude: ["password", "createdAt", "updatedAt"]
+      },
+      include: [
+        {
+          model: db.models.Session,
+          as: "sessions",
+          attributes: ["session_id", "ip", "user_agent"]
+        }
+      ]
+    });
+    if(!user){
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "User fetched Successfully",
+      user
+    })
+  } catch (error: unknown) {
+    return resErrorHanlder(error, res);
+  }
+}

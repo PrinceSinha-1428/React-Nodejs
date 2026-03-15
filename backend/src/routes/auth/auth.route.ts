@@ -8,8 +8,8 @@ const authRoutes = Router();
 
 authRoutes.post("/sign-in", [validate(loginSchema), signIn]);
 authRoutes.post("/sign-up", [validate(createUserSchema), signUp]);
-authRoutes.get("/refresh", [refreshToken]);
 authRoutes.get("/logout", [logout]);
+authRoutes.get("/refresh", [refreshToken]);
 
 
 export default authRoutes;
