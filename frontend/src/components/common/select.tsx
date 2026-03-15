@@ -28,7 +28,7 @@ const CustomSelect: FC<SelectProps> = ({
         {label}
       </label>
       <div
-        className="cursor-pointer rounded-lg dark:bg-black/40 dark:text-gray-100 text-gray-400 px-4 py-2 flex justify-between items-center border border-gray-600 hover:border-blue-500 transition-colors overflow-hidden"
+        className="cursor-pointer rounded-lg dark:bg-black/40 dark:text-gray-100 text-gray-400 px-2 py-1 flex justify-between items-center border border-gray-600 hover:border-blue-500 transition-colors overflow-hidden"
         onClick={() => setOpen(!open)}
       >
         <span className="truncate min-w-0 flex-1 w-0 dark:text-white text-black">

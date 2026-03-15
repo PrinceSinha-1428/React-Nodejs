@@ -38,7 +38,7 @@ const Input: FC<InputProps> = ({
           rounded-lg
           border border-gray-600
           dark:bg-black/40
-          px-4 py-2
+          px-2 py-1
           dark:text-gray-100
           bg-white
           focus:border-blue-500 focus:ring-1 focus:ring-blue-500

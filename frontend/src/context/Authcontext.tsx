@@ -25,8 +25,10 @@ interface AuthContextType {
   fetchUsers: () => Promise<void>;
   sessionLogout: () => Promise<ReturnType<typeof setTimeout> | undefined>;
   signIn: (email: string, password: string) => Promise<void>;
-  createUser: (formData: FormDataTypes) => Promise<void>;
   signUp: (formData: FormDataTypes) => Promise<void>;
+  createUser: (formData: FormDataTypes) => Promise<void>;
+  deleteUser: (user_id: string) => Promise<void>;
+  updateUser: (user_id: string, data: { name?: string; email?: string; role?: string }) => Promise<void>;
   errors: Record<string, string>;
   clearErrors: () => void;
 }
@@ -43,6 +45,8 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => {},
   signUp: async () => {},
   createUser: async () => {},
+  deleteUser: async () => {},
+  updateUser: async () => {},
   errors: {},
   clearErrors: () => {},
 });
@@ -149,9 +153,11 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
       return;
     }
     try {
-      const res = await axiosInstance.post<ApiResponse<string>>("/api/auth/sign-up", formData);
+      const res = await axiosInstance.post<ApiResponse<string>>("/api/auth/sign-up", {...formData, role: "User"});
       if(res.data.success){
         toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message);
       }
       } catch (error: unknown) {
         toast.error(handleError(error));
@@ -228,6 +234,8 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
       const res = await axiosInstance.get<ApiResponse>("/api/auth/refresh");
       if(res.data.success && !isLoggedOutRef.current){
         scheduleRefreshAccessToken();
+      } else {
+        toast.error(res.data.message);
       }
     } catch (error: unknown) {
       clearAllCookies();
@@ -280,6 +288,44 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
+  const deleteUser = async (user_id: string) => {
+    try {
+      const res = await axiosInstance.delete<ApiResponse>(`/api/users/${user_id}`);
+      if(res.data.success){
+        toast.success(res.data.message);
+        if (user && user.user_id === user_id) {
+          clearAllCookies();
+          await logout();
+          return;
+        }
+        await fetchUsers();
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error: unknown) {
+      toast.error(handleError(error));
+    }
+  }
+
+  const updateUser = async (user_id: string, data: { name?: string; email?: string; role?: string }) => {
+    try {
+      const res = await axiosInstance.put<ApiResponse<User>>(`/api/users/${user_id}`, data);
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setUsers((prev) => prev.map((u) => u.user_id === user_id ? { ...u, ...res.data.user } : u));
+        if (user && user.user_id === user_id) {
+          const updatedUser = { ...user, ...res.data.user };
+          setUser(updatedUser);
+          Cookies.set("user", JSON.stringify(updatedUser));
+        }
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error: unknown) {
+      toast.error(handleError(error));
+    }
+  }
+
   useEffect(() => {
     let timerId: ReturnType<typeof setTimeout> | undefined;
     const autoLogout = async () => {
@@ -320,7 +366,9 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
     errors,
     signUp,
     clearErrors,
-    refreshNewToken
+    refreshNewToken,
+    deleteUser,
+    updateUser
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

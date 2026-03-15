@@ -22,11 +22,7 @@ axiosInstance.interceptors.response.use(
    async (error: AxiosError) => {
       const originalRequest: any = error.config;
   
-      if (
-        error.response?.status === 401 &&
-        !originalRequest._retry &&
-        !originalRequest.url?.includes("/api/auth/refresh")
-      ) {
+      if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes("/api/auth/refresh")) {
         originalRequest._retry = true;
   
         try {

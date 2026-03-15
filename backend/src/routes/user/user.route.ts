@@ -1,4 +1,9 @@
-import { createUser, deleteUser, getUsers } from "@/controllers/user/user.controller";
+import {
+  createUser,
+  deleteUser,
+  getUsers,
+  updateUser,
+} from "@/controllers/user/user.controller";
 import { isAuthenticated } from "@/middleware/auth/auth.middleware";
 import { authorizeRoles } from "@/middleware/role/role.middleware";
 import { validate } from "@/middleware/validation/validate.middleware";
@@ -10,7 +15,13 @@ const userRoutes = Router();
 userRoutes.use(isAuthenticated);
 
 userRoutes.get("/", authorizeRoles("Super Admin", "Admin"), getUsers);
-userRoutes.post("/", authorizeRoles("Super Admin", "Admin"), validate(createUserSchema), createUser);
-userRoutes.delete("/:id", authorizeRoles("Super Admin", "Admin"), deleteUser);
+userRoutes.post(
+  "/",
+  authorizeRoles("Super Admin", "Admin"),
+  validate(createUserSchema),
+  createUser,
+);
+userRoutes.put("/:id", authorizeRoles("Super Admin"), updateUser);
+userRoutes.delete("/:id", authorizeRoles("Super Admin"), deleteUser);
 
 export default userRoutes;

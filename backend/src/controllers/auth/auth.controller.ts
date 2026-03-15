@@ -10,11 +10,18 @@ export const signUp = async (req: Request, res: Response) => {
   try {
     const { name, email, password, role } = req.body;
 
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !password || !role ) {
       return res.status(400).json({
         success: false,
         message: "Missing credentials",
       });
+    };
+
+    if(role === "Admin" || role === "Super Admin"){
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden: Only Admins can create this role"
+      })
     }
 
     const isAlreadyRegistered = await db.models.User.findOne({
@@ -29,14 +36,14 @@ export const signUp = async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await db.models.User.create({
-      name,
-      email,
-      role,
+      name: name.trim(),
+      email: email.trim(),
+      role: "User",
       password: hashedPassword,
     });
 
-    const accessToken = generateToken({ user_id: newUser.user_id, email, role },  15, "m" );
-    const refreshToken = generateToken({ user_id: newUser.user_id, email, role }, 1, "d" );
+    const accessToken = generateToken({ user_id: newUser.user_id, email, role: newUser.role },  15, "m" );
+    const refreshToken = generateToken({ user_id: newUser.user_id, email, role: newUser.role }, 1, "d" );
     const sessionExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
 
     res.cookie("refreshToken", refreshToken, {
@@ -193,6 +200,27 @@ export const refreshToken = async (req: Request, res: Response) => {
       email: string;
       role: string;
     };
+
+    const userExists = await db.models.User.findOne({ where: { user_id: decoded.user_id } });
+    if (!userExists) {
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: NODE_ENV === "production",
+        path: "/",
+      });
+      res.clearCookie("accessToken", {
+        httpOnly: false,
+        sameSite: "lax",
+        secure: NODE_ENV === "production",
+        path: "/",
+      });
+      return res.status(401).json({
+        success: false,
+        message: "User no longer exists",
+      });
+    }
+
     const payload = {
       user_id: decoded.user_id,
       email: decoded.email,

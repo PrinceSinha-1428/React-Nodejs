@@ -37,6 +37,12 @@ const CreateUser = () => {
     try {
       e.preventDefault();
       await createUser(formData);
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        role: "User"
+      })
     } catch (error: unknown) {
       toast.error(handleError(error));
     }

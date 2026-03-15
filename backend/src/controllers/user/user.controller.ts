@@ -22,9 +22,9 @@ export const createUser = async (req: Request, res: Response) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await db.models.User.create({
-      name,
-      email,
-      role,
+      name: name.trim(),
+      email: email.trim(),
+      role: role.trim(),
       password: hashedPassword,
     });
     const { password: _, ...safeUser } = newUser.toJSON();
@@ -78,5 +78,52 @@ export const deleteUser = async (req: Request, res: Response) => {
     })
   } catch (error: unknown) {
     return resErrorHanlder(error, res)
+  }
+}
+
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { id: user_id } = req.params;
+    const { name, email, role } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({
+        success: false,
+        message: "User id is missing",
+      });
+    }
+
+    const user = await db.models.User.findOne({ where: { user_id } });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (email && email !== user.email) {
+      const existing = await db.models.User.findOne({ where: { email } });
+      if (existing) {
+        return res.status(409).json({
+          success: false,
+          message: "Email already in use",
+        });
+      }
+    }
+
+    await user.update({
+      ...(name && { name: name.trim() }),
+      ...(email && { email: email.trim() }),
+      ...(role && { role: role.trim() }),
+    });
+
+    const { password: _, ...safeUser } = user.toJSON();
+    return res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      user: safeUser,
+    });
+  } catch (error: unknown) {
+    return resErrorHanlder(error, res);
   }
 }
