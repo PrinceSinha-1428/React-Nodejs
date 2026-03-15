@@ -35,7 +35,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="h-15 w-full bg-white dark:bg-zinc-950/80 backdrop-blur-md  border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-200 flex items-center justify-between sticky top-0 z-40">
+    <nav className="h-15 w-full dark:border-b-white/20 border bg-white dark:bg-zinc-950/80 backdrop-blur-md  border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-200 flex items-center justify-between sticky top-0 z-40">
       <div
         className="flex items-center cursor-pointer"
         onClick={() => navigate("/")}

@@ -6,7 +6,7 @@ import Home from "./pages/Home";
 
 const App = () => {
   return (
-    <div className="dark:bg-zinc-900 bg-white min-h-screen text-zinc-900 dark:text-white">
+    <div className="dark:bg-black bg-white min-h-screen text-zinc-900 dark:text-white">
       <Routes>
         <Route path="/sign-in" element={<SignIn />} />
         <Route element={<ProtectedRoutes />}>

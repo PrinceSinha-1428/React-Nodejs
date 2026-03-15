@@ -53,7 +53,7 @@ const CreateUser = () => {
   }, [errors]);
 
   return (
-    <div className="p-10 border border-white/40">
+    <div className="p-10 border dark:border-white/10 border-black ">
       <form
         onSubmit={handleSubmit}
         className="flex items-center justify-center py-4 px-2 gap-4 bg-white dark:bg-zinc-900"

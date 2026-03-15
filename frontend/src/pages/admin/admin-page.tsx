@@ -39,7 +39,7 @@ const AdminPage = () => {
       <Navbar />
       <CreateUser />
       {users?.length > 0 && (
-        <table className="text-white w-full h-full mt-6 border-collapse">
+        <table className="dark:text-white text-black  w-full h-full mt-6 border-collapse">
           <thead>
             <tr>
               <th className="text-left px-4 py-2 border-b border-white/20">
@@ -121,12 +121,12 @@ const AdminPage = () => {
                         <Check
                           onClick={saveEdit}
                           size={20}
-                          className="text-green-700 hover:text-green-500"
+                          className="dark:text-green-700 text-green-500 hover:text-green-600  dark:hover:text-green-500"
                         />
                         <X
                           onClick={cancelEdit}
                           size={20}
-                          className="text-red-700 hover:text-red-500"
+                          className="dark:text-red-700 text-red-500 hover:text-red-600  dark:hover:text-red-500"
                         />
                       </span>
                     ) : (
@@ -136,12 +136,12 @@ const AdminPage = () => {
                             startEdit({ user_id, name, email, role })
                           }
                           size={15}
-                          className="text-green-700 hover:text-green-500"
+                          className="dark:text-green-700 text-green-500 hover:text-green-600  dark:hover:text-green-500"
                         />
                         <Trash
                           onClick={() => deleteUser(user_id)}
                           size={15}
-                          className="text-red-700 hover:text-red-500"
+                          className="dark:text-red-700 text-red-500 hover:text-red-600  dark:hover:text-red-500"
                         />
                       </span>
                     )}
