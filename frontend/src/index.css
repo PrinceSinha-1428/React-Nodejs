@@ -5,9 +5,15 @@
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-box-shadow:dark 0 0 0 1000px rgba(0, 0, 0, 0) inset;
   -webkit-box-shadow: 0 0 0 1000px rgba(162, 162, 162, 0) inset;
-  -webkit-text-fill-color:dark #f3f4f6;
   -webkit-text-fill-color: #000000;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0) inset;
+  -webkit-text-fill-color: #f3f4f6;
   transition: background-color 5000s ease-in-out 0s;
 }

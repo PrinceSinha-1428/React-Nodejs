@@ -42,7 +42,7 @@ const Navbar = () => {
       >
         <div className="flex items-center justify-center py-2 px-4 ">
           <p className="flex items-center justify-center bg-white dark:bg-black dark:text-white text-black w-8 rounded-full h-8 border border-black dark:border-white">
-            {user?.name[0]}
+            {user?.name[0].toUpperCase()}
           </p>
         </div>
         <div className="flex items-start flex-col text-black dark:text-white">
