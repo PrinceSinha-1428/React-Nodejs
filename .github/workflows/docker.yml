@@ -19,15 +19,15 @@ jobs:
            password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Backend Image
-        run: docker build -t username/backend:latest ./backend
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest ./backend
 
       - name: Push Backend Image
-        run: docker push username/backend:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
 
       - name: Build Frontend Image
-        run: docker build -t username/frontend:latest ./frontend
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ./frontend
 
       - name: Push Frontend Image
-        run: docker push username/frontend:latest 
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest 
 
        
