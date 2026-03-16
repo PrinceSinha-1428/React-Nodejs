@@ -1,0 +1,34 @@
+name: Docker Build
+
+on:
+   push:
+       branches: [main]
+
+jobs:
+  docker:
+    runs-on: "ubuntu-latest"
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Login to dockerhub
+        uses: docker/Login-action@v3
+        with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Backend Image
+        run: docker build -t username/backend:latest ./backend
+
+      - name: Push Backend Image
+        run: docker push username/backend:latest
+
+      - name: Build Frontend Image
+        run: docker build -t username/frontend:latest ./frontend
+
+      - name: Push Frontend Image
+        run: docker push username/frontend:latest 
+
+       
