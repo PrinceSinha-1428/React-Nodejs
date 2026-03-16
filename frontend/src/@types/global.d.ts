@@ -12,3 +12,12 @@ interface ApiResponse<T = any> {
    accessToken: string
    user: T;
 }
+
+ interface FormDataTypes {
+  name: string;
+  email: string;
+  password: string;
+  role: Role;
+}
+
+type Data =  Omit<FormDataTypes, "password">

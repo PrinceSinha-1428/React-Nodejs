@@ -80,9 +80,9 @@ const Navbar = () => {
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg dark:bg-white dark:text-black  bg-black hover:bg-black text-white dark:hover:bg-white transition-colors cursor-pointer"
           >
             <current.icon size={14} />
-            <span className="text-sm">{current.label}</span>
+            <span className="text-sm min-w-12">{current.label}</span>
             <ChevronDown
-              size={12}
+              size={14}
               className={`transition-transform ${open ? "rotate-180" : ""}`}
             />
           </button>

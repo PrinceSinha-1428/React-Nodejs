@@ -9,12 +9,8 @@ import { useAuth } from "../context/Authcontext";
 type Role = "Super Admin" | "Admin" | "User";
 const roles: Role[] = ["Super Admin", "Admin", "User"];
 
-export interface FormDataTypes {
-  name: string;
-  email: string;
-  password: string;
-  role: Role;
-}
+
+
 
 const CreateUser = () => {
   const { createUser, loading, errors, clearErrors } = useAuth();
@@ -56,7 +52,7 @@ const CreateUser = () => {
     <div className="p-10 border dark:border-white/10 border-black ">
       <form
         onSubmit={handleSubmit}
-        className="flex items-center justify-center py-4 px-2 gap-4 bg-white dark:bg-zinc-900"
+        className="flex items-center justify-center py-4 px-2 gap-4 bg-white dark:bg-black"
       >
         <div className="flex items-center justify-center gap-4 w-full">
           <div className="flex flex-col gap-1 w-full">

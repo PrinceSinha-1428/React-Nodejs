@@ -4,7 +4,7 @@ import { handleError } from "../../lib/errorHandler";
 import toast from "react-hot-toast";
 import Input from "../../components/common/input";
 import Button from "../../components/common/button";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 
 type Role = "Super Admin" | "Admin" | "User";
@@ -18,6 +18,7 @@ export interface FormDataTypes {
 
 const SignUp = () => {
   const { signUp, loading, errors, clearErrors, user } = useAuth();
+  const navigate = useNavigate();
   const [ispasswordVisible, setIspasswordVisible] = useState<boolean>(false);   
   const [formData, setFormData] = useState<FormDataTypes>({
     name: "",
@@ -56,7 +57,7 @@ const SignUp = () => {
     <div className="p-10 border dark:border-white/10 border-black ">
       <form
         onSubmit={handleSubmit}
-        className="flex items-center justify-center py-4 px-2 gap-4 bg-white dark:bg-zinc-900"
+        className="flex items-center justify-center py-4 px-2 gap-4 bg-white dark:bg-black"
       >
         <div className="flex items-center justify-center gap-4 w-full">
           <div className="flex flex-col gap-1 w-full">
@@ -91,6 +92,7 @@ const SignUp = () => {
             <Input
               label="Password"
               id="Password"
+              type="password"
               placeholder="Enter password..."
               value={formData.password}
               ispasswordVisible={ispasswordVisible}
@@ -113,6 +115,7 @@ const SignUp = () => {
           {loading ? "Signing..." : "Sign Up"}
         </Button>
       </form>
+      <span onClick={() => navigate("/sign-in")}  className="text-xs text-blue-700 cursor-pointer hover:text-blue-500 w-fit">Already have an account</span>
     </div>
   );
 };

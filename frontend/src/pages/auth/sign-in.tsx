@@ -82,7 +82,7 @@ const SignIn = () => {
           >
             {loading ? "Signing..." : "Sign in"}
           </Button>
-          <p onClick={() => navigate("/sign-up")} className="text-xs cursor-pointer hover:text-blue-700 text-blue-500">Don't have an account.</p>
+          <p onClick={() => navigate("/sign-up")} className="text-xs cursor-pointer hover:text-blue-500 text-blue-700">Don't have an account.</p>
         </div>
       </form>
     </div>

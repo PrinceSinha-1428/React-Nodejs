@@ -11,7 +11,6 @@ import { handleError } from "../lib/errorHandler";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-import type { FormDataTypes } from "../components/create-user";
 import { useNavigate } from "react-router-dom";
 import { setAuthHandlers } from "../lib/tokenManager";
 
@@ -28,7 +27,7 @@ interface AuthContextType {
   signUp: (formData: FormDataTypes) => Promise<void>;
   createUser: (formData: FormDataTypes) => Promise<void>;
   deleteUser: (user_id: string) => Promise<void>;
-  updateUser: (user_id: string, data: { name?: string; email?: string; role?: string }) => Promise<void>;
+  updateUser: (user_id: string, data: Data) => Promise<void>;
   errors: Record<string, string>;
   clearErrors: () => void;
 }
@@ -95,6 +94,7 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
       }
     } catch (error: unknown) {
       toast.error(handleError(error));
+      navigate("/sign-up")
     } finally {
       setLoading(false);
     }
@@ -153,8 +153,12 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
       return;
     }
     try {
-      const res = await axiosInstance.post<ApiResponse<User>>("/api/auth/sign-up", {...formData, role: "User"});
-      if(res.data.success){
+      setLoading(true);
+      const res = await axiosInstance.post<ApiResponse<User>>(
+        "/api/auth/sign-up",
+        { ...formData, role: "User" },
+      );
+      if (res.data.success) {
         toast.success(res.data.message);
         setUser(res.data.user);
         Cookies.set("user", JSON.stringify(res.data.user));
@@ -162,10 +166,12 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
       } else {
         toast.error(res.data.message);
       }
-      } catch (error: unknown) {
-        toast.error(handleError(error));
-      }
-  }
+    } catch (error: unknown) {
+      toast.error(handleError(error));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const logout = async () => {
     try {
@@ -233,9 +239,9 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
   const refreshNewToken = async () => {
     if (isLoggedOutRef.current) return;
     try {
-      console.log("token resfreshing")
+      console.log("token resfreshing");
       const res = await axiosInstance.get<ApiResponse>("/api/auth/refresh");
-      if(res.data.success && !isLoggedOutRef.current){
+      if (res.data.success && !isLoggedOutRef.current) {
         scheduleRefreshAccessToken();
       } else {
         toast.error(res.data.message);
@@ -244,26 +250,26 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
       clearAllCookies();
       await logout();
     }
-  }
+  };
 
   const scheduleRefreshAccessToken = async () => {
     if (isLoggedOutRef.current) return;
     try {
       const token = Cookies.get("accessToken");
-      if(!token){
+      if (!token) {
         return;
       }
-      const decode = jwtDecode<{exp: number}>(token);
+      const decode = jwtDecode<{ exp: number }>(token);
       const expiryTime = decode.exp;
       const currentTime = Math.floor(Date.now() / 1000);
 
-      if(!expiryTime){
+      if (!expiryTime) {
         return;
       }
 
       const remaningTime = expiryTime - currentTime;
 
-      if(remaningTime <=0){
+      if (remaningTime <= 0) {
         await refreshNewToken();
         return;
       }
@@ -276,10 +282,11 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
     } catch (error: unknown) {
       toast.error(handleError(error));
     }
-  }
+  };
 
   const fetchUsers = async () => {
     try {
+      setLoading(true);
       const res = await axiosInstance.get<ApiResponse<User[]>>("/api/users");
       if (res.data.success) {
         setUsers(res.data.data);
@@ -288,13 +295,18 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
       }
     } catch (error: unknown) {
       toast.error(handleError(error));
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteUser = async (user_id: string) => {
     try {
-      const res = await axiosInstance.delete<ApiResponse>(`/api/users/${user_id}`);
-      if(res.data.success){
+      setLoading(true);
+      const res = await axiosInstance.delete<ApiResponse>(
+        `/api/users/${user_id}`,
+      );
+      if (res.data.success) {
         toast.success(res.data.message);
         if (user && user.user_id === user_id) {
           clearAllCookies();
@@ -307,15 +319,25 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
       }
     } catch (error: unknown) {
       toast.error(handleError(error));
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
-  const updateUser = async (user_id: string, data: { name?: string; email?: string; role?: string }) => {
+  const updateUser = async (user_id: string, data: Data) => {
     try {
-      const res = await axiosInstance.put<ApiResponse<User>>(`/api/users/${user_id}`, data);
+      setLoading(true);
+      const res = await axiosInstance.put<ApiResponse<User>>(
+        `/api/users/${user_id}`,
+        data,
+      );
       if (res.data.success) {
         toast.success(res.data.message);
-        setUsers((prev) => prev.map((u) => u.user_id === user_id ? { ...u, ...res.data.user } : u));
+        setUsers((prev) =>
+          prev.map((u) =>
+            u.user_id === user_id ? { ...u, ...res.data.user } : u,
+          ),
+        );
         if (user && user.user_id === user_id) {
           const updatedUser = { ...user, ...res.data.user };
           setUser(updatedUser);
@@ -326,8 +348,10 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
       }
     } catch (error: unknown) {
       toast.error(handleError(error));
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     let timerId: ReturnType<typeof setTimeout> | undefined;
@@ -371,7 +395,7 @@ export const AuthcontextProvider = ({ children }: PropsWithChildren) => {
     clearErrors,
     refreshNewToken,
     deleteUser,
-    updateUser
+    updateUser,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

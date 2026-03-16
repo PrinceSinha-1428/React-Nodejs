@@ -11,7 +11,7 @@ const roles = ["Super Admin", "Admin", "User"];
 const AdminPage = () => {
   const { fetchUsers, users, deleteUser, updateUser, user } = useAuth();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editData, setEditData] = useState({ name: "", email: "", role: "" });
+  const [editData, setEditData] = useState({ name: "", email: "", role: "User" });
 
   useEffect(() => {
     fetchUsers();

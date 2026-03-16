@@ -1,0 +1,46 @@
+name: Build Project
+
+on:
+   push:
+      branches: [main]
+
+jobs:
+   build:
+      runs-on: ubuntu-latest
+
+      steps:
+         - name: Checkout
+           uses: actions/checkout@v3
+         
+         - name: Setup Node
+           uses: actions/setup-node@v3
+           with:
+            node-version: 22
+
+         - name: Install Dependency Frontend
+           run: npm install
+           working-directory: frontend
+
+
+         - name: Build Project Frontend
+           run: npm run build
+           working-directory: Frontend
+
+
+         - name: Install Dependency Backend
+           run: npm install
+           working-directory: backend
+
+
+         - name: Build Project Backend
+           run: npm run build
+           working-directory: backend
+
+
+         - name: Upload Build Files
+           uses: actions/upload-artifact@v4
+           with:
+             name: build-files
+             path: dist/
+            
+

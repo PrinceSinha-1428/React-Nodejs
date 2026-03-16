@@ -43,15 +43,8 @@ export const signUp = async (req: Request, res: Response) => {
       password: hashedPassword,
     });
 
-    const refreshToken = generateToken(
-      { user_id: newUser.user_id, email, role: newUser.role },
-      1,
-      "d",
-    );
-    const refreshTokenHash = crypto
-      .createHash("sha256")
-      .update(refreshToken)
-      .digest("hex");
+    const refreshToken = generateToken({ user_id: newUser.user_id, email, role: newUser.role }, 1, "d");
+    const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
 
     const session = await db.models.Session.create({
       user_id: newUser.user_id,
@@ -122,7 +115,7 @@ export const signIn = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "User not found, Please sign up",
         user: null,
       });
     }
@@ -152,10 +145,7 @@ export const signIn = async (req: Request, res: Response) => {
       user_agent: req.headers["user-agent"] || "",
     });
     const accessToken = generateToken(
-      { user_id, sessionId: session.session_id, email, role },
-      15,
-      "m",
-    );
+      { user_id, sessionId: session.session_id, email, role },  15, "m");
 
     const { password: _, ...safeUser } = user;
 
@@ -330,7 +320,7 @@ export const refreshToken = async (req: Request, res: Response) => {
       revoked: false,
       user_agent: req.headers["user-agent"] || "",
     });
-    const accessToken = generateToken( payload, 15, "m");
+    const accessToken = generateToken(payload, 15, "m");
 
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
