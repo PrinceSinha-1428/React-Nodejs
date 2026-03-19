@@ -1,9 +1,11 @@
 import { useTheme } from "../../context/Themecontext";
-import { Monitor, Moon,  Sun, ChevronDown,  LogOut, ShieldUser, ArrowRight } from "lucide-react";
+import { Monitor, Moon,  Sun, ChevronDown,  LogOut, ShieldUser, ArrowRight, Menu } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/Authcontext";
 import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../common/button";
+import { useSidebar } from "../../context/Sidebarcontext";
+import Sidebar from "./sidebar";
 
 const themes = [
   { value: "light" as const, label: "Light", icon: Sun },
@@ -14,6 +16,7 @@ const themes = [
 const Navbar = () => {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { isSideBarOpen, setSidebar } = useSidebar();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -37,9 +40,12 @@ const Navbar = () => {
   return (
     <nav className="h-15 w-full dark:border-b-white/20 border bg-white dark:bg-zinc-950/80 backdrop-blur-md  border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-200 flex items-center justify-between sticky top-0 z-40">
       <div
-        className="flex items-center cursor-pointer"
+        className="flex items-center cursor-pointer "
         onClick={() => navigate("/")}
-      >
+        >
+          <div onClick={() => setSidebar()} className="flex items-center justify-center ml-2">
+            <Menu className="text-black dark:text-white" />
+          </div>
         <div className="flex items-center justify-center py-2 px-4 ">
           <p className="flex items-center justify-center bg-white dark:bg-black dark:text-white text-black w-8 rounded-full h-8 border border-black dark:border-white">
             {user?.name[0].toUpperCase()}
