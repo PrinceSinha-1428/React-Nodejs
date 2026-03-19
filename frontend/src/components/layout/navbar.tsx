@@ -5,7 +5,6 @@ import { useAuth } from "../../context/Authcontext";
 import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../common/button";
 import { useSidebar } from "../../context/Sidebarcontext";
-import Sidebar from "./sidebar";
 
 const themes = [
   { value: "light" as const, label: "Light", icon: Sun },
@@ -16,7 +15,7 @@ const themes = [
 const Navbar = () => {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
-  const { isSideBarOpen, setSidebar } = useSidebar();
+  const { setSidebar } = useSidebar();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
