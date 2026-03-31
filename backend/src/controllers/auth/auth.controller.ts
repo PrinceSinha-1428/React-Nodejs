@@ -60,7 +60,7 @@ export const signUp = async (req: Request, res: Response) => {
       role: newUser.role,
     };
     const accessToken = generateToken(accessTokenPayload, 15, "m");
-    const sessionExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
+    const sessionExpiresAt = Date.now() + (24 * 60 * 60 * 1000);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -149,7 +149,7 @@ export const signIn = async (req: Request, res: Response) => {
 
     const { password: _, ...safeUser } = user;
 
-    const sessionExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
+    const sessionExpiresAt = Date.now() + (24 * 60 * 60 * 1000);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,

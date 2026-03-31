@@ -1,4 +1,11 @@
-import "dotenv/config";
+import dotenv from  "dotenv";
+import path from "path";
+
+dotenv.config({
+  path: path.join(__dirname, "../../../.env"),
+  quiet: true,
+});
+
 
 type Environment = "development" | "production";
 interface EnvConfig {
