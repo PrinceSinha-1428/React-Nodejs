@@ -15,15 +15,19 @@ const dbConfig: sql.config = {
 
 export const connectDB = async () => {
   try {
-    const connection = await sql.connect(dbConfig);
-    if (!connection) {
-      console.log(`Error connecting database`);
-      return false;
-    }
-    console.log("Database Connected Sucessfully");
-    await connection
-      .request()
-      .query(`IF DB_ID('auth') IS NULL CREATE DATABASE auth`);
+    const connection = await sql.connect({
+      ...dbConfig,
+      database: "master"
+    });
+    
+    await connection.request().query(`IF DB_ID('auth') IS NULL CREATE DATABASE auth`);
+    await connection.close();
+
+    await sql.connect({
+      ...dbConfig,
+      database: "auth",
+    });
+    console.log("Database Connected Successfully");
     return true;
   } catch (error: unknown) {
     console.log(

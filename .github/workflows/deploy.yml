@@ -1,0 +1,27 @@
+name: Deployment using docker
+
+on:
+  push:
+    branches: [main]
+
+  workflow_dispatch:
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+      
+      - name: Stop containers
+        run: docker-compose down
+
+      - name: Build containers
+        run: docker-compose build
+
+      - name: Start containers
+        run: docker-compose up -d
+
+   

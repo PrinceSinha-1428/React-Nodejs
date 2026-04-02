@@ -1,4 +1,4 @@
-FROM node:22
+FROM node:22 as builder
 
 WORKDIR /app
 
@@ -10,6 +10,14 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 4000
+FROM node:22
 
-CMD [ "node", "dist/index.js" ]
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY --from=builder /app/dist ./dist
+
+CMD ["node", "dist/server.js"]

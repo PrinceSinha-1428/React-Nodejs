@@ -6,5 +6,6 @@ export type Role = "Super Admin" | "Admin" | "User";
 declare module "express" {
   export interface Request {
     user?: User;
+    clientIp?: string;
   }
 }

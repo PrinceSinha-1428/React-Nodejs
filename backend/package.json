@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch --ignore ../frontend --clear-screen=true src/server.ts",
-    "build": "tsc"
+    "build": "tsc && tsc-alias"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +30,7 @@
     "@types/mssql": "^9.1.9",
     "@types/node": "^25.4.0",
     "@types/sequelize": "^4.28.20",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
