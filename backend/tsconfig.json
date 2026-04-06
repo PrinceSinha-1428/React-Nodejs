@@ -1,18 +1,18 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "module": "CommonJS",
+    "module": "Node16",
     "noImplicitReturns": false,
     "noImplicitAny": false,
     "noUnusedLocals": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
-    "moduleResolution": "Node",
+    "moduleResolution": "Node16",
     "resolveJsonModule": true,
+    "rootDir": "src",
     "outDir": "dist",
-    "importsNotUsedAsValues": "remove",
+    "verbatimModuleSyntax": false,
     "strict": true,
     "sourceMap": true,
     "esModuleInterop": true,

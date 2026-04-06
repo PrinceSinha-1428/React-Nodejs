@@ -1,19 +1,18 @@
-import { ENV, NODE_ENV } from "@/config/env.service";
 import { resErrorHanlder } from "@/config/error.handler";
 import { NextFunction, Request, Response } from "express";
 import path from "path";
 
 export const ipRestriction = async (req: Request, res: Response, next: NextFunction ) => {
    try {
-
-      const isDev = ENV[NODE_ENV].ENABLE_IP_RESTRICTION !== 'true';
-      if(isDev) return next();
       
       const country = req.headers["cf-ipcountry"] as string; 
-
+      console.log({country})
       if (!country) {
-         return next();
-       };
+         return next(); 
+      }
+
+      console.log({country})
+
       const allowedCountries = ["IN"];
 
       if(!allowedCountries.includes(country)){

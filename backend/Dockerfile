@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package*.json .
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 
@@ -19,5 +19,6 @@ COPY package*.json ./
 RUN npm install --only=production
 
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/public ./public
 
 CMD ["node", "dist/server.js"]

@@ -16,7 +16,6 @@ interface EnvConfig {
    DB_USER: string;
    DB_PASSWORD: string;
    DB_PORT: number;
-   ENABLE_IP_RESTRICTION: string;
 };
 
 export const NODE_ENV = process.env.NODE_ENV === "production" ? "production" : "development";
@@ -31,7 +30,6 @@ export const ENV: Record<Environment, EnvConfig> = {
     DB_USER: process.env.DB_USER!,
     DB_PASSWORD: process.env.DB_PASSWORD!,
     DB_PORT: Number(process.env.DB_PORT!),
-    ENABLE_IP_RESTRICTION: process.env.ENABLE_IP_RESTRICTION!
   },
   production: {
     port: Number(process.env.PORT) ?? 8080,
@@ -41,7 +39,6 @@ export const ENV: Record<Environment, EnvConfig> = {
     DB_USER: process.env.DB_USER!,
     DB_PASSWORD: process.env.DB_PASSWORD!,
     DB_PORT: Number(process.env.DB_PORT!),
-    ENABLE_IP_RESTRICTION: process.env.ENABLE_IP_RESTRICTION!
 
   },
 };
